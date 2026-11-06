@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiveHost Pro - Ninos Design, Ratu Hijab, Evollet, Wivi</title>
+    <title>LiveHost Pro - Portal Login & Absensi Host Live</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,25 +14,39 @@
     <header class="gradient-bg text-white shadow-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
+                <!-- Logo & Brand Info -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleRoleSwitch()">
                     <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-xl text-white shadow-inner">
-                        <i class="fa-solid fa-vest-patches"></i>
+                        <i class="fa-solid fa-tower-broadcast"></i>
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
                             <h1 class="font-extrabold text-lg sm:text-xl tracking-tight">LiveHost Pro</h1>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-white/20 uppercase tracking-widest">Multi-Brand</span>
+                            <span id="role-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 uppercase tracking-widest">Host Portal</span>
                         </div>
                         <p class="text-xs text-indigo-100 hidden sm:block">Ninos Design • Ratu Hijab • Evollet • Wivi</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <div id="live-clock" class="text-xs font-mono font-bold bg-white/10 px-3 py-1.5 rounded-lg border border-white/20 text-indigo-100">
+
+                <!-- Right Action Bar: User Session & Clock -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div id="live-clock" class="text-xs font-mono font-bold bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/20 text-indigo-100 hidden sm:block">
                         --:--:-- WIB
                     </div>
-                    <button onclick="openModal('modal-host')" class="bg-white/15 hover:bg-white/25 text-white text-xs px-3 py-2 rounded-lg font-semibold transition border border-white/20">
-                        <i class="fa-solid fa-user-plus mr-1"></i> + Host Baru
-                    </button>
+
+                    <!-- User Account / Role Button -->
+                    <div class="flex items-center space-x-2 bg-white/15 px-3 py-1.5 rounded-xl border border-white/20">
+                        <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white">
+                            <i id="user-avatar-icon" class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="text-left hidden sm:block">
+                            <div id="user-display-name" class="text-xs font-bold text-white leading-tight">Nadia Putri</div>
+                            <div id="user-display-role" class="text-[10px] text-indigo-200 leading-tight">Host Live Part-time</div>
+                        </div>
+                        <button onclick="openModal('modal-login')" title="Ganti Akun / Login" class="ml-1 text-xs text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-1.5 rounded-lg transition">
+                            <i class="fa-solid fa-right-left"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -41,251 +55,356 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Brand Selector & Filter Bar -->
-        <div class="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-col md:flex-row justify-between items-center gap-3">
-            <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1 mr-1">Brand:</span>
-                <button onclick="filterByBrand('')" id="brand-btn-all" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition">
-                    Semua Brand
-                </button>
-                <button onclick="filterByBrand('Ninos Design')" id="brand-btn-ninos" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
-                    <span class="w-2 h-2 rounded-full bg-rose-600"></span>
-                    <span>Ninos Design</span>
-                </button>
-                <button onclick="filterByBrand('Ratu Hijab')" id="brand-btn-ratu" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
-                    <span class="w-2 h-2 rounded-full bg-teal-600"></span>
-                    <span>Ratu Hijab</span>
-                </button>
-                <button onclick="filterByBrand('Evollet')" id="brand-btn-evollet" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
-                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-                    <span>Evollet</span>
-                </button>
-                <button onclick="filterByBrand('Wivi')" id="brand-btn-wivi" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-600"></span>
-                    <span>Wivi</span>
-                </button>
-            </div>
-            <div class="text-xs font-medium text-slate-500 self-end md:self-auto">
-                Filter Aktif: <span id="active-brand-label" class="font-bold text-indigo-700">Semua Brand</span>
-            </div>
-        </div>
-
-        <!-- Metrics Overview Grid -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="card p-5">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
-                    <span>Host Aktif</span>
-                    <i class="fa-solid fa-users text-indigo-500 text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-slate-800" id="stat-active-hosts">-</div>
-                <p class="text-xs text-slate-500 mt-1">Host live part-time studio</p>
-            </div>
-
-            <div class="card p-5">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
-                    <span>Jadwal Shift</span>
-                    <i class="fa-regular fa-calendar-check text-indigo-500 text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-slate-800" id="stat-total-schedules">-</div>
-                <p class="text-xs text-slate-500 mt-1"><span id="stat-total-hours">0</span> jam siaran terjadwal</p>
-            </div>
-
-            <div class="card p-5">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
-                    <span>Total Omset GMV</span>
-                    <i class="fa-solid fa-chart-line text-emerald-500 text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-emerald-600" id="stat-total-gmv">Rp 0</div>
-                <p class="text-xs text-slate-500 mt-1"><span id="stat-total-orders">0</span> total pesanan live</p>
-            </div>
-
-            <div class="card p-5">
-                <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
-                    <span>Pending Payroll</span>
-                    <i class="fa-solid fa-wallet text-amber-500 text-base"></i>
-                </div>
-                <div class="text-2xl font-black text-amber-600" id="stat-pending-payroll">Rp 0</div>
-                <p class="text-xs text-slate-500 mt-1">Siap verifikasi & transfer</p>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <div class="border-b border-slate-200">
-            <nav class="flex space-x-6 overflow-x-auto text-sm font-medium text-slate-600" aria-label="Tabs">
-                <button onclick="switchTab('tab-jadwal')" id="btn-tab-jadwal" class="tab-btn active pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-regular fa-calendar-days"></i>
-                    <span>1. Jadwal Shift Brand</span>
-                </button>
-                <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="tab-btn pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-solid fa-camera"></i>
-                    <span>2. Absensi Selfie & Jam Kerja</span>
-                </button>
-                <button onclick="switchTab('tab-performa')" id="btn-tab-performa" class="tab-btn pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>3. Penonton & Penjualan</span>
-                </button>
-                <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="tab-btn pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-solid fa-receipt"></i>
-                    <span>4. Pembayaran Gaji Part-Time</span>
-                </button>
-                <button onclick="switchTab('tab-hosts')" id="btn-tab-hosts" class="tab-btn pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-solid fa-id-badge"></i>
-                    <span>5. Data Host</span>
-                </button>
-            </nav>
-        </div>
-
-        <!-- TAB 1: JADWAL SHIFT -->
-        <section id="tab-jadwal" class="tab-content space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Jadwal Shift Live Streaming</h2>
-                    <p class="text-xs text-slate-500">Alokasi host di Brand (Ninos Design, Ratu Hijab, Evollet, Wivi) & target penjualan.</p>
-                </div>
-                <button onclick="openModal('modal-schedule')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-sm transition">
-                    <i class="fa-solid fa-plus mr-1.5"></i> Buat Shift Baru
-                </button>
-            </div>
-
-            <!-- Schedules Table -->
-            <div class="card overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
-                            <tr>
-                                <th class="p-3.5">Brand</th>
-                                <th class="p-3.5">Tanggal & Jam</th>
-                                <th class="p-3.5">Host</th>
-                                <th class="p-3.5">Platform & Sesi</th>
-                                <th class="p-3.5">Durasi</th>
-                                <th class="p-3.5">Target GMV</th>
-                                <th class="p-3.5">Status</th>
-                                <th class="p-3.5 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="schedules-tbody" class="divide-y divide-slate-100 text-xs">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: ABSENSI DENGAN FITUR SELFIE & TIMESTAMP -->
-        <section id="tab-absensi" class="tab-content hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Absensi Kehadiran Host Live</h2>
-                    <p class="text-xs text-slate-500">Dilengkapi fitur foto selfie langsung dengan kamera depan dan timestamp WIB otomatis.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Selfie & Terminal Box -->
-                <div class="card p-5 space-y-4 lg:col-span-5 border-indigo-100">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <div class="flex items-center space-x-2 text-indigo-700 font-bold text-sm">
-                            <i class="fa-solid fa-camera"></i>
-                            <h3>Terminal Selfie & Absen</h3>
+        <!-- ========================================== -->
+        <!-- VIEW 1: PORTAL HOST LIVE (CHECK-IN / OUT) -->
+        <!-- ========================================== -->
+        <section id="section-host-portal" class="space-y-6">
+            
+            <!-- Host Greeting & Shift Card -->
+            <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 rounded-2xl p-6 text-white shadow-lg border border-indigo-700/50 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-semibold text-indigo-200 mb-2 border border-white/10">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Shift Aktif Hari Ini</span>
                         </div>
-                        <span id="terminal-live-time" class="text-[11px] font-mono font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">--:--:-- WIB</span>
+                        <h2 class="text-2xl font-black tracking-tight" id="host-welcome-title">Halo, Nadia Putri! 👋</h2>
+                        <p class="text-xs text-indigo-200 mt-1" id="host-shift-subtitle">Jadwal siaran langsung Anda untuk brand Ninos Design siap dimulai.</p>
                     </div>
 
-                    <!-- Video / Canvas Selfie Frame -->
+                    <!-- Quick Switch to Admin if available -->
+                    <div class="flex items-center space-x-2">
+                        <button onclick="switchToAdminView()" class="bg-white/10 hover:bg-white/20 text-white text-xs px-3.5 py-2 rounded-xl font-semibold border border-white/20 transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Buka Dashboard Admin</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Attendance Action Box (Mobile Friendly) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Terminal Kamera & Tombol Check-In / Check-Out -->
+                <div class="card p-6 lg:col-span-7 space-y-5 border-indigo-100">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <div class="flex items-center space-x-2 text-indigo-700 font-bold text-base">
+                            <i class="fa-solid fa-camera"></i>
+                            <h3>Terminal Check-In & Check-Out Host</h3>
+                        </div>
+                        <span id="terminal-live-time" class="text-xs font-mono font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg">
+                            --:--:-- WIB
+                        </span>
+                    </div>
+
+                    <!-- Camera Selfie Frame -->
                     <div class="space-y-2">
-                        <label class="block text-xs font-semibold text-slate-700">Foto Selfie Bukti Kehadiran</label>
-                        <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center">
-                            <!-- Video Element for Webcam -->
+                        <label class="block text-xs font-bold text-slate-700">Foto Selfie Bukti Kehadiran di Studio</label>
+                        <div class="relative w-full h-56 bg-slate-900 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center">
+                            <!-- Video Webcam Stream -->
                             <video id="selfie-video" autoplay playsinline class="w-full h-full object-cover hidden"></video>
                             
                             <!-- Captured Image Preview -->
                             <img id="selfie-img-preview" class="w-full h-full object-cover hidden" alt="Selfie Host">
                             
-                            <!-- Initial Placeholder -->
+                            <!-- Placeholder -->
                             <div id="selfie-placeholder" class="text-center text-slate-400 p-4">
-                                <i class="fa-solid fa-camera text-3xl mb-2 text-slate-500"></i>
-                                <p class="text-xs font-medium">Buka kamera atau unggah foto selfie sebelum Clock-In / Clock-Out</p>
+                                <i class="fa-solid fa-camera text-4xl mb-2 text-slate-500"></i>
+                                <p class="text-xs font-medium">Buka kamera depan untuk mengambil foto selfie sebelum Check-In atau Check-Out</p>
                             </div>
 
                             <!-- Live Timestamp Overlay -->
-                            <div id="selfie-timestamp-badge" class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-md text-white text-[10px] font-mono px-2 py-1 rounded hidden border border-white/20">
+                            <div id="selfie-timestamp-badge" class="absolute bottom-2 left-2 bg-black/75 backdrop-blur-md text-white text-[11px] font-mono px-2.5 py-1 rounded-lg hidden border border-white/20">
                                 <i class="fa-regular fa-clock mr-1"></i><span id="selfie-timestamp-text">-</span>
                             </div>
                         </div>
 
-                        <!-- Canvas for Snapshot -->
                         <canvas id="selfie-canvas" class="hidden"></canvas>
 
                         <!-- Camera Action Buttons -->
                         <div class="grid grid-cols-2 gap-2 pt-1">
-                            <button type="button" onclick="startWebcam()" id="btn-start-camera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 px-3 rounded-lg font-semibold border flex items-center justify-center space-x-1">
-                                <i class="fa-solid fa-video"></i>
-                                <span>Buka Kamera</span>
+                            <button type="button" onclick="startWebcam()" id="btn-start-camera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2.5 px-3 rounded-lg font-semibold border flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-video text-indigo-600"></i>
+                                <span>Buka Kamera Selfie</span>
                             </button>
-                            <button type="button" onclick="captureSelfieSnapshot()" id="btn-capture-selfie" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-2 px-3 rounded-lg font-bold shadow-sm flex items-center justify-center space-x-1 hidden">
+                            <button type="button" onclick="captureSelfieSnapshot()" id="btn-capture-selfie" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-2.5 px-3 rounded-lg font-bold shadow-sm flex items-center justify-center space-x-1.5 hidden">
                                 <i class="fa-solid fa-camera-retro"></i>
-                                <span>Ambil Selfie</span>
+                                <span>Jepret Foto Selfie</span>
                             </button>
-                            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 px-3 rounded-lg font-semibold border text-center cursor-pointer flex items-center justify-center space-x-1">
-                                <i class="fa-solid fa-upload"></i>
+                            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2.5 px-3 rounded-lg font-semibold border text-center cursor-pointer flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-upload text-slate-500"></i>
                                 <span>Unggah Foto</span>
                                 <input type="file" accept="image/*" onchange="handleSelfieUpload(event)" class="hidden">
                             </label>
                         </div>
                     </div>
 
-                    <!-- Attendance Controls Form -->
-                    <div class="space-y-3 pt-2 border-t">
+                    <!-- Shift Info & Check-In/Out Form -->
+                    <div class="space-y-3 pt-3 border-t">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Shift Live Host</label>
-                            <select id="clock-schedule-select" onchange="onScheduleSelectChange()" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Sesi Shift Terjadwal</label>
+                            <select id="clock-schedule-select" onchange="onScheduleSelectChange()" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white font-medium">
                                 <!-- Populated by JS -->
                             </select>
                         </div>
+
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Link Room Live (Opsional)</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Link Room Live (TikTok / Shopee Live)</label>
                             <input type="url" id="clock-live-link" placeholder="https://tiktok.com/@ninosdesign/live" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg">
                         </div>
 
-                        <!-- Clock Out Fields (Viewers & Sales) -->
-                        <div id="clock-out-metrics-box" class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-2">
-                            <span class="text-[11px] font-bold text-slate-700 block"><i class="fa-solid fa-chart-line text-indigo-600 mr-1"></i>Input Hasil Sesi Siaran (Saat Clock-Out):</span>
-                            <div class="grid grid-cols-2 gap-2">
+                        <!-- Check-out Results Form (Viewers & Sales) -->
+                        <div id="clock-out-metrics-box" class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-100 space-y-2.5">
+                            <span class="text-xs font-bold text-indigo-900 block flex items-center space-x-1.5">
+                                <i class="fa-solid fa-chart-line text-indigo-600"></i>
+                                <span>Hasil Sesi Live (Diisi saat Check-Out):</span>
+                            </span>
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Penonton (Peak Viewers)</label>
-                                    <input type="number" id="clock-out-viewers" placeholder="1500" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Penonton Puncak (Peak Viewers)</label>
+                                    <input type="number" id="clock-out-viewers" placeholder="Contoh: 1500" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Jumlah Order (Checkout)</label>
-                                    <input type="number" id="clock-out-orders" placeholder="120" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Total Pesanan (Orders)</label>
+                                    <input type="number" id="clock-out-orders" placeholder="Contoh: 120" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Realisasi Penjualan (GMV Rp)</label>
-                                <input type="number" id="clock-out-sales" placeholder="7500000" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Realisasi Omset Penjualan (GMV Rupiah)</label>
+                                <input type="number" id="clock-out-sales" placeholder="Contoh: 7850000" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="grid grid-cols-2 gap-2 pt-1">
-                            <button onclick="handleClockIn()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm flex items-center justify-center space-x-1.5">
+                        <!-- Big Check-In / Check-Out Buttons -->
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <button onclick="handleClockIn()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-extrabold py-3 rounded-xl shadow-md flex items-center justify-center space-x-2 transition">
                                 <i class="fa-solid fa-play"></i>
-                                <span>Clock-In Mulai</span>
+                                <span>CHECK-IN MULAI LIVE</span>
                             </button>
-                            <button onclick="handleClockOut()" class="w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm flex items-center justify-center space-x-1.5">
+                            <button onclick="handleClockOut()" class="w-full bg-rose-600 hover:bg-rose-700 text-white text-sm font-extrabold py-3 rounded-xl shadow-md flex items-center justify-center space-x-2 transition">
                                 <i class="fa-solid fa-stop"></i>
-                                <span>Clock-Out Selesai</span>
+                                <span>CHECK-OUT SELESAI</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Attendance Log & Selfie Gallery Table -->
-                <div class="card lg:col-span-7 overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-slate-800">Log Kehadiran & Foto Bukti Selfie Host</h4>
-                        <span class="text-xs text-slate-400">Timestamp otomatis terverifikasi</span>
+                <!-- Host Profile & Earnings Summary -->
+                <div class="space-y-4 lg:col-span-5">
+                    
+                    <!-- Host Stats Cards -->
+                    <div class="card p-5 space-y-4 border-slate-200">
+                        <div class="flex items-center justify-between border-b pb-3">
+                            <h4 class="font-bold text-sm text-slate-900">Performa & Honor Saya Minggu Ini</h4>
+                            <span class="text-[10px] font-bold px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md">Live Status</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <span class="text-[11px] font-medium text-slate-500 block">Total Jam Siaran</span>
+                                <span class="text-xl font-black text-slate-800" id="host-my-hours">0 Jam</span>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <span class="text-[11px] font-medium text-slate-500 block">Honor Jam</span>
+                                <span class="text-xl font-black text-slate-800" id="host-my-rate">Rp 0/jam</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-50/70 p-4 rounded-xl border border-emerald-100">
+                            <span class="text-[11px] font-semibold text-emerald-800 block">Total Omset GMV Dihasilkan</span>
+                            <span class="text-2xl font-black text-emerald-700" id="host-my-gmv">Rp 0</span>
+                            <p class="text-[10px] text-emerald-600 mt-1">Dihitung dari siaran brand Ninos Design, Ratu Hijab, Evollet, & Wivi</p>
+                        </div>
+
+                        <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-100">
+                            <span class="text-[11px] font-semibold text-indigo-800 block">Estimasi Gaji & Komisi Saya</span>
+                            <span class="text-2xl font-black text-indigo-700" id="host-my-net-salary">Rp 0</span>
+                            <p class="text-[10px] text-indigo-600 mt-1">Gaji Pokok Jam + Komisi Penjualan + Insentif Target</p>
+                        </div>
                     </div>
+
+                    <!-- Riwayat Absensi Saya -->
+                    <div class="card p-4 overflow-hidden">
+                        <h4 class="font-bold text-xs uppercase text-slate-500 tracking-wider mb-3">Riwayat Absensi Terakhir Saya</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-500 font-semibold border-b">
+                                    <tr>
+                                        <th class="p-2">Brand</th>
+                                        <th class="p-2">Waktu Check-In / Out</th>
+                                        <th class="p-2">Penjualan</th>
+                                        <th class="p-2">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="host-my-attendance-tbody" class="divide-y divide-slate-100">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: DASHBOARD ADMIN & MANAGEMENT       -->
+        <!-- ========================================== -->
+        <section id="section-admin-dashboard" class="hidden space-y-6">
+            
+            <!-- Admin Top Bar with Back to Host Portal button -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900 text-white p-4 rounded-xl gap-3">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                    <span class="font-bold text-sm">Mode Manajemen Studio (Admin View)</span>
+                    <span class="text-xs text-slate-400">| Akses Penuh Semua Jadwal & Payroll</span>
+                </div>
+                <button onclick="switchToHostView()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3.5 py-1.5 rounded-lg font-bold transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Kembali ke Portal Host</span>
+                </button>
+            </div>
+
+            <!-- Brand Selector & Filter Bar -->
+            <div class="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-col md:flex-row justify-between items-center gap-3">
+                <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1 mr-1">Brand:</span>
+                    <button onclick="filterByBrand('')" id="brand-btn-all" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition">
+                        Semua Brand
+                    </button>
+                    <button onclick="filterByBrand('Ninos Design')" id="brand-btn-ninos" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                        <span>Ninos Design</span>
+                    </button>
+                    <button onclick="filterByBrand('Ratu Hijab')" id="brand-btn-ratu" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                        <span>Ratu Hijab</span>
+                    </button>
+                    <button onclick="filterByBrand('Evollet')" id="brand-btn-evollet" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                        <span>Evollet</span>
+                    </button>
+                    <button onclick="filterByBrand('Wivi')" id="brand-btn-wivi" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+                        <span>Wivi</span>
+                    </button>
+                </div>
+                <div class="text-xs font-medium text-slate-500 self-end md:self-auto">
+                    Filter: <span id="active-brand-label" class="font-bold text-indigo-700">Semua Brand</span>
+                </div>
+            </div>
+
+            <!-- Metrics Overview Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-5">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+                        <span>Host Aktif</span>
+                        <i class="fa-solid fa-users text-indigo-500 text-base"></i>
+                    </div>
+                    <div class="text-2xl font-black text-slate-800" id="stat-active-hosts">-</div>
+                    <p class="text-xs text-slate-500 mt-1">Host live part-time studio</p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+                        <span>Jadwal Shift</span>
+                        <i class="fa-regular fa-calendar-check text-indigo-500 text-base"></i>
+                    </div>
+                    <div class="text-2xl font-black text-slate-800" id="stat-total-schedules">-</div>
+                    <p class="text-xs text-slate-500 mt-1"><span id="stat-total-hours">0</span> jam siaran terjadwal</p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+                        <span>Total Omset GMV</span>
+                        <i class="fa-solid fa-chart-line text-emerald-500 text-base"></i>
+                    </div>
+                    <div class="text-2xl font-black text-emerald-600" id="stat-total-gmv">Rp 0</div>
+                    <p class="text-xs text-slate-500 mt-1"><span id="stat-total-orders">0</span> total pesanan live</p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+                        <span>Pending Payroll</span>
+                        <i class="fa-solid fa-wallet text-amber-500 text-base"></i>
+                    </div>
+                    <div class="text-2xl font-black text-amber-600" id="stat-pending-payroll">Rp 0</div>
+                    <p class="text-xs text-slate-500 mt-1">Siap verifikasi & transfer</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="border-b border-slate-200">
+                <nav class="flex space-x-6 overflow-x-auto text-sm font-medium text-slate-600" aria-label="Tabs">
+                    <button onclick="switchTab('tab-jadwal')" id="btn-tab-jadwal" class="tab-btn active pb-3 px-1 flex items-center space-x-2">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span>1. Jadwal Shift Brand</span>
+                    </button>
+                    <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="tab-btn pb-3 px-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>2. Rekap Absensi Selfie</span>
+                    </button>
+                    <button onclick="switchTab('tab-performa')" id="btn-tab-performa" class="tab-btn pb-3 px-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>3. Penonton & Penjualan</span>
+                    </button>
+                    <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="tab-btn pb-3 px-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>4. Penggajian & Payout</span>
+                    </button>
+                    <button onclick="switchTab('tab-hosts')" id="btn-tab-hosts" class="tab-btn pb-3 px-1 flex items-center space-x-2">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <span>5. Data Host</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- TAB 1: JADWAL SHIFT -->
+            <section id="tab-jadwal" class="tab-content space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Jadwal Shift Live Streaming</h2>
+                        <p class="text-xs text-slate-500">Alokasi host di Brand (Ninos Design, Ratu Hijab, Evollet, Wivi) & target penjualan.</p>
+                    </div>
+                    <button onclick="openModal('modal-schedule')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-sm transition">
+                        <i class="fa-solid fa-plus mr-1.5"></i> Buat Shift Baru
+                    </button>
+                </div>
+
+                <div class="card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
+                                <tr>
+                                    <th class="p-3.5">Brand</th>
+                                    <th class="p-3.5">Tanggal & Jam</th>
+                                    <th class="p-3.5">Host</th>
+                                    <th class="p-3.5">Platform & Sesi</th>
+                                    <th class="p-3.5">Durasi</th>
+                                    <th class="p-3.5">Target GMV</th>
+                                    <th class="p-3.5">Status</th>
+                                    <th class="p-3.5 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedules-tbody" class="divide-y divide-slate-100 text-xs">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: REKAP ABSENSI GLOBAL -->
+            <section id="tab-absensi" class="tab-content hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Rekap Seluruh Absensi & Foto Selfie</h2>
+                        <p class="text-xs text-slate-500">Bukti kehadiran selfie dan jam siaran aktual seluruh host studio.</p>
+                    </div>
+                </div>
+
+                <div class="card overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
@@ -304,188 +423,214 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- TAB 3: PENONTON & PENJUALAN (PERFORMANCE) -->
-        <section id="tab-performa" class="tab-content hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Tracking Penonton & Penjualan (Performance)</h2>
-                    <p class="text-xs text-slate-500">Analisis Viewers, Jumlah Order, Omset Penjualan GMV, dan Pencapaian Target per Brand.</p>
-                </div>
-            </div>
-
-            <!-- Performance Grid -->
-            <div class="card overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
-                            <tr>
-                                <th class="p-3.5">Brand & Sesi</th>
-                                <th class="p-3.5">Host</th>
-                                <th class="p-3.5">Jumlah Penonton</th>
-                                <th class="p-3.5">Jumlah Order</th>
-                                <th class="p-3.5">Realisasi Penjualan</th>
-                                <th class="p-3.5">Target GMV</th>
-                                <th class="p-3.5">Pencapaian Target</th>
-                                <th class="p-3.5 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="performance-tbody" class="divide-y divide-slate-100 text-xs">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 4: PEMBAYARAN GAJI PART-TIME -->
-        <section id="tab-payroll" class="tab-content hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Perhitungan & Pembayaran Gaji Part-Time</h2>
-                    <p class="text-xs text-slate-500">Akumulasi upah jam kerja + bonus komisi GMV dari Ninos Design, Ratu Hijab, Evollet, dan Wivi.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Payroll Generator Card -->
-                <div class="card p-5 space-y-4 lg:col-span-4 border-indigo-100">
-                    <h3 class="font-bold text-sm text-indigo-700 flex items-center space-x-2">
-                        <i class="fa-solid fa-calculator"></i>
-                        <span>Kalkulator & Generate Slip Gaji</span>
-                    </h3>
-
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Host Part-Time</label>
-                            <select id="payroll-host-select" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white">
-                                <!-- Populated by JS -->
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Dari Tanggal</label>
-                                <input type="date" id="payroll-start-date" value="2026-11-01" class="w-full text-xs p-2 border border-slate-300 rounded-lg">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Sampai Tanggal</label>
-                                <input type="date" id="payroll-end-date" value="2026-11-07" class="w-full text-xs p-2 border border-slate-300 rounded-lg">
-                            </div>
-                        </div>
-
-                        <button onclick="calculateHostPayroll()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
-                            <i class="fa-solid fa-magnifying-glass-dollar mr-1"></i> Hitung Estimasi Gaji
-                        </button>
-                    </div>
-
-                    <!-- Calculation Preview Box -->
-                    <div id="payroll-preview-box" class="hidden border-t border-slate-200 pt-3 space-y-2 text-xs">
-                        <div class="flex justify-between text-slate-600">
-                            <span>Total Sesi Selesai:</span>
-                            <span class="font-bold text-slate-800" id="prev-sessions">0 sesi</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Total Jam Kerja:</span>
-                            <span class="font-bold text-slate-800" id="prev-hours">0 jam</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Gaji Pokok Jam:</span>
-                            <span class="font-bold text-slate-800" id="prev-base">Rp 0</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Komisi Penjualan GMV:</span>
-                            <span class="font-bold text-emerald-600" id="prev-comm">+ Rp 0</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Bonus Target Tercapai:</span>
-                            <span class="font-bold text-emerald-600" id="prev-bonus">+ Rp 0</span>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Potongan Terlambat:</span>
-                            <span class="font-bold text-rose-600" id="prev-deduct">- Rp 0</span>
-                        </div>
-                        <div class="flex justify-between text-sm font-black border-t border-slate-200 pt-2 text-slate-900">
-                            <span>Total Net Gaji:</span>
-                            <span class="text-indigo-600 text-base" id="prev-net">Rp 0</span>
-                        </div>
-
-                        <!-- Brand breakdown preview -->
-                        <div id="prev-brand-breakdown" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[11px] space-y-1">
-                            <!-- Populated by JS -->
-                        </div>
-
-                        <button onclick="generateAndSavePayroll()" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
-                            <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Terbitkan & Simpan Slip Gaji
-                        </button>
+            <!-- TAB 3: PERFORMA PENJUALAN -->
+            <section id="tab-performa" class="tab-content hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Tracking Penonton & Penjualan</h2>
+                        <p class="text-xs text-slate-500">Analisis Viewers, Jumlah Order, Omset Penjualan GMV, dan Pencapaian Target.</p>
                     </div>
                 </div>
 
-                <!-- Payroll Records List -->
-                <div class="card lg:col-span-8 overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-slate-800">Daftar Slip Gaji & Rekening Transfer</h4>
-                    </div>
+                <div class="card overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
                                 <tr>
-                                    <th class="p-3">No. Slip</th>
-                                    <th class="p-3">Host & Rekening</th>
-                                    <th class="p-3">Periode</th>
-                                    <th class="p-3">Total Gaji</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3 text-right">Aksi</th>
+                                    <th class="p-3.5">Brand & Sesi</th>
+                                    <th class="p-3.5">Host</th>
+                                    <th class="p-3.5">Jumlah Penonton</th>
+                                    <th class="p-3.5">Jumlah Order</th>
+                                    <th class="p-3.5">Realisasi Penjualan</th>
+                                    <th class="p-3.5">Target GMV</th>
+                                    <th class="p-3.5">Pencapaian</th>
+                                    <th class="p-3.5 text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="payroll-history-tbody" class="divide-y divide-slate-100 text-xs">
+                            <tbody id="performance-tbody" class="divide-y divide-slate-100 text-xs">
                                 <!-- Populated by JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- TAB 5: DATA HOST -->
-        <section id="tab-hosts" class="tab-content hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Daftar Host Live Streaming</h2>
-                    <p class="text-xs text-slate-500">Profil host, tier keahlian, rate honor per jam, dan komisi omset penjualan.</p>
+            <!-- TAB 4: PAYROLL GAJI -->
+            <section id="tab-payroll" class="tab-content hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Perhitungan & Pembayaran Gaji Part-Time</h2>
+                        <p class="text-xs text-slate-500">Kalkulasi upah jam kerja + bonus komisi GMV multi-brand.</p>
+                    </div>
                 </div>
-                <button onclick="openModal('modal-host')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm">
-                    <i class="fa-solid fa-user-plus mr-1"></i> Tambah Host
-                </button>
-            </div>
 
-            <div class="card overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
-                            <tr>
-                                <th class="p-3.5">Nama Host</th>
-                                <th class="p-3.5">Kontak</th>
-                                <th class="p-3.5">Platform</th>
-                                <th class="p-3.5">Tier</th>
-                                <th class="p-3.5">Rate / Jam</th>
-                                <th class="p-3.5">Komisi GMV</th>
-                                <th class="p-3.5">Rekening Bank</th>
-                                <th class="p-3.5">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="hosts-tbody" class="divide-y divide-slate-100 text-xs">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="card p-5 space-y-4 lg:col-span-4 border-indigo-100">
+                        <h3 class="font-bold text-sm text-indigo-700 flex items-center space-x-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Kalkulator & Generate Slip Gaji</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Host</label>
+                                <select id="payroll-host-select" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white"></select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Dari</label>
+                                    <input type="date" id="payroll-start-date" value="2026-11-01" class="w-full text-xs p-2 border border-slate-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Sampai</label>
+                                    <input type="date" id="payroll-end-date" value="2026-11-07" class="w-full text-xs p-2 border border-slate-300 rounded-lg">
+                                </div>
+                            </div>
+                            <button onclick="calculateHostPayroll()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
+                                <i class="fa-solid fa-magnifying-glass-dollar mr-1"></i> Hitung Estimasi Gaji
+                            </button>
+                        </div>
+
+                        <div id="payroll-preview-box" class="hidden border-t border-slate-200 pt-3 space-y-2 text-xs">
+                            <div class="flex justify-between text-slate-600"><span>Total Sesi:</span><span class="font-bold text-slate-800" id="prev-sessions">0</span></div>
+                            <div class="flex justify-between text-slate-600"><span>Total Jam:</span><span class="font-bold text-slate-800" id="prev-hours">0 jam</span></div>
+                            <div class="flex justify-between text-slate-600"><span>Gaji Pokok Jam:</span><span class="font-bold text-slate-800" id="prev-base">Rp 0</span></div>
+                            <div class="flex justify-between text-slate-600"><span>Komisi GMV:</span><span class="font-bold text-emerald-600" id="prev-comm">+ Rp 0</span></div>
+                            <div class="flex justify-between text-slate-600"><span>Bonus Target:</span><span class="font-bold text-emerald-600" id="prev-bonus">+ Rp 0</span></div>
+                            <div class="flex justify-between text-slate-600"><span>Denda Telat:</span><span class="font-bold text-rose-600" id="prev-deduct">- Rp 0</span></div>
+                            <div class="flex justify-between text-sm font-black border-t border-slate-200 pt-2 text-slate-900">
+                                <span>Total Net Gaji:</span><span class="text-indigo-600 text-base" id="prev-net">Rp 0</span>
+                            </div>
+                            <div id="prev-brand-breakdown" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[11px] space-y-1"></div>
+                            <button onclick="generateAndSavePayroll()" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
+                                <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Terbitkan & Simpan Slip
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card lg:col-span-8 overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                            <h4 class="font-bold text-sm text-slate-800">Daftar Slip Gaji & Rekening Transfer</h4>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
+                                    <tr>
+                                        <th class="p-3">No. Slip</th>
+                                        <th class="p-3">Host & Rekening</th>
+                                        <th class="p-3">Periode</th>
+                                        <th class="p-3">Total Gaji</th>
+                                        <th class="p-3">Status</th>
+                                        <th class="p-3 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payroll-history-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- TAB 5: DATA HOST -->
+            <section id="tab-hosts" class="tab-content hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Daftar Host Live Streaming</h2>
+                        <p class="text-xs text-slate-500">Profil host, tier keahlian, rate honor per jam, dan komisi omset penjualan.</p>
+                    </div>
+                    <button onclick="openModal('modal-host')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm">
+                        <i class="fa-solid fa-user-plus mr-1"></i> Tambah Host
+                    </button>
+                </div>
+
+                <div class="card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
+                                <tr>
+                                    <th class="p-3.5">Nama Host</th>
+                                    <th class="p-3.5">Kontak</th>
+                                    <th class="p-3.5">Platform</th>
+                                    <th class="p-3.5">Tier</th>
+                                    <th class="p-3.5">Rate / Jam</th>
+                                    <th class="p-3.5">Komisi GMV</th>
+                                    <th class="p-3.5">Rekening Bank</th>
+                                    <th class="p-3.5">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hosts-tbody" class="divide-y divide-slate-100 text-xs"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
         </section>
 
     </main>
 
-    <!-- MODAL 1: BUAT SHIFT BARU DENGAN BRAND SELECTOR -->
+    <!-- ========================================== -->
+    <!-- MODAL LOGIN / GANTI ROLE HOST LIVE & ADMIN -->
+    <!-- ========================================== -->
+    <div id="modal-login" class="modal fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base leading-tight">Pilih Akses Pengguna</h3>
+                        <p class="text-[11px] text-slate-400">Portal Absensi Host Live & Studio Admin</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-login')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl text-xs font-bold text-center">
+                <button type="button" onclick="switchLoginRole('host')" id="login-role-host-btn" class="py-2.5 rounded-lg bg-white text-indigo-700 shadow-sm transition">
+                    <i class="fa-solid fa-user-clock mr-1"></i> Host Live
+                </button>
+                <button type="button" onclick="switchLoginRole('admin')" id="login-role-admin-btn" class="py-2.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Admin Studio
+                </button>
+            </div>
+
+            <!-- Host Login Form -->
+            <form id="form-host-login" onsubmit="submitHostLogin(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Pilih Nama Host Anda</label>
+                    <select id="login-host-select" class="w-full p-2.5 border rounded-xl bg-white font-semibold text-slate-800" required>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Kode PIN Host (Opsional, Default: 1234)</label>
+                    <input type="password" id="login-host-pin" placeholder="1234" value="1234" class="w-full p-2.5 border rounded-xl font-mono">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-3 rounded-xl shadow-md text-sm mt-2 transition">
+                    Masuk ke Terminal Host Live
+                </button>
+            </form>
+
+            <!-- Admin Login Form -->
+            <form id="form-admin-login" onsubmit="submitAdminLogin(event)" class="space-y-3 text-xs hidden">
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-800 text-[11px]">
+                    <i class="fa-solid fa-lock mr-1"></i> Mode Admin digunakan oleh tim manajemen & owner studio untuk mengatur shift, performa, dan payroll.
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">PIN Admin Studio</label>
+                    <input type="password" id="login-admin-pin" placeholder="Masukkan PIN (Default: admin)" value="admin" class="w-full p-2.5 border rounded-xl font-mono" required>
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-extrabold py-3 rounded-xl shadow-md text-sm mt-2 transition">
+                    Masuk sebagai Admin Studio
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CREATE SCHEDULE -->
     <div id="modal-schedule" class="modal fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -557,7 +702,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: INPUT PERFORMA LIVE -->
+    <!-- MODAL INPUT PERFORMANCE -->
     <div id="modal-perf" class="modal fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -592,7 +737,7 @@
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Catatan Evaluasi</label>
-                    <textarea id="perf-notes" rows="2" placeholder="Host aktif menjawab chat, call-to-action bagus" class="w-full p-2.5 border rounded-lg"></textarea>
+                    <textarea id="perf-notes" rows="2" placeholder="Host aktif menjawab chat" class="w-full p-2.5 border rounded-lg"></textarea>
                 </div>
                 <div class="flex justify-end space-x-2 pt-3">
                     <button type="button" onclick="closeModal('modal-perf')" class="px-4 py-2 border rounded-lg text-slate-600">Batal</button>
@@ -602,7 +747,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: TAMBAH HOST BARU -->
+    <!-- MODAL CREATE HOST -->
     <div id="modal-host" class="modal fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
