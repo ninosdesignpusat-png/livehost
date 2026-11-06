@@ -1,0 +1,28 @@
+{
+  "hosts": [
+    { "id": 1, "name": "Nadia Putri", "phone": "081234567890", "email": "nadia@livehost.id", "platforms": "TikTok Live, Shopee Live", "hourly_rate": 45000, "commission_rate": 0.025, "tier": "Senior", "bank_name": "BCA", "bank_account": "8271928371", "status": "Active" },
+    { "id": 2, "name": "Rizky Maulana", "phone": "082345678901", "email": "rizky@livehost.id", "platforms": "TikTok Live", "hourly_rate": 35000, "commission_rate": 0.015, "tier": "Junior", "bank_name": "Mandiri", "bank_account": "142001928374", "status": "Active" },
+    { "id": 3, "name": "Clarissa Salsabila", "phone": "083456789012", "email": "clarissa@livehost.id", "platforms": "Shopee Live, Tokopedia Play", "hourly_rate": 50000, "commission_rate": 0.03, "tier": "Star", "bank_name": "BCA", "bank_account": "5240192834", "status": "Active" },
+    { "id": 4, "name": "Dimas Pratama", "phone": "085678901234", "email": "dimas@livehost.id", "platforms": "TikTok Live, Instagram Live", "hourly_rate": 35000, "commission_rate": 0.015, "tier": "Junior", "bank_name": "BRI", "bank_account": "034101002345501", "status": "Active" }
+  ],
+  "schedules": [
+    { "id": 1, "host_id": 1, "brand": "Ninos Design", "title": "Morning Fashion Show - Ninos Gamis Syari Exclusive", "platform": "TikTok Live", "scheduled_date": "2026-11-05", "start_time": "09:00", "end_time": "12:00", "planned_duration_hours": 3.0, "target_gmv": 7000000, "status": "Completed", "notes": "Fokus gamis rayon & printing ninos premium" },
+    { "id": 2, "host_id": 2, "brand": "Ratu Hijab", "title": "Flash Sale Ratu Hijab - Voal Paris & Silk Pashmina", "platform": "Shopee Live", "scheduled_date": "2026-11-05", "start_time": "13:00", "end_time": "16:00", "planned_duration_hours": 3.0, "target_gmv": 5000000, "status": "Completed", "notes": "Voucher subsidi ongkir + bundle hemat" },
+    { "id": 3, "host_id": 3, "brand": "Evollet", "title": "Prime Night Launching - Evollet Outer & Casual Set", "platform": "TikTok Live", "scheduled_date": "2026-11-05", "start_time": "19:00", "end_time": "22:00", "planned_duration_hours": 3.0, "target_gmv": 12000000, "status": "Completed", "notes": "Model baru launching perkenalan" },
+    { "id": 4, "host_id": 1, "brand": "Wivi", "title": "Wivi Weekend Flash Sale - Casual Daily Series", "platform": "Shopee Live", "scheduled_date": "2026-11-06", "start_time": "10:00", "end_time": "13:00", "planned_duration_hours": 3.0, "target_gmv": 6000000, "status": "In Progress", "notes": "Katalog celana kulot & kemeja linen" },
+    { "id": 5, "host_id": 4, "brand": "Ninos Design", "title": "Night Special - Ninos Design Abaya Glamour", "platform": "TikTok Live", "scheduled_date": "2026-11-06", "start_time": "19:30", "end_time": "22:30", "planned_duration_hours": 3.0, "target_gmv": 8500000, "status": "Scheduled", "notes": "Etalase 1-10 koleksi pesta" }
+  ],
+  "attendances": [
+    { "id": 1, "schedule_id": 1, "host_id": 1, "clock_in": "2026-11-05 08:55:00", "clock_out": "2026-11-05 12:05:00", "timestamp_clock_in": "2026-11-05 08:55:12 WIB", "timestamp_clock_out": "2026-11-05 12:05:44 WIB", "selfie_image": "", "actual_hours": 3.17, "live_link": "https://tiktok.com/@ninosdesign/live", "viewers_count": 1450, "orders_count": 168, "sales_amount": 7850000, "validation_status": "Approved", "late_minutes": 0, "supervisor_notes": "Selfie terverifikasi di studio Ninos" },
+    { "id": 2, "schedule_id": 2, "host_id": 2, "clock_in": "2026-11-05 13:04:00", "clock_out": "2026-11-05 16:02:00", "timestamp_clock_in": "2026-11-05 13:04:20 WIB", "timestamp_clock_out": "2026-11-05 16:02:15 WIB", "selfie_image": "", "actual_hours": 2.97, "live_link": "https://shopee.co.id/live/ratuhijab", "viewers_count": 890, "orders_count": 92, "sales_amount": 5300000, "validation_status": "Approved", "late_minutes": 4, "supervisor_notes": "Selfie di ruang live Ratu Hijab" },
+    { "id": 3, "schedule_id": 3, "host_id": 3, "clock_in": "2026-11-05 18:52:00", "clock_out": "2026-11-05 22:15:00", "timestamp_clock_in": "2026-11-05 18:52:50 WIB", "timestamp_clock_out": "2026-11-05 22:15:30 WIB", "selfie_image": "", "actual_hours": 3.38, "live_link": "https://tiktok.com/@evollet/live", "viewers_count": 2980, "orders_count": 245, "sales_amount": 14200000, "validation_status": "Approved", "late_minutes": 0, "supervisor_notes": "Selfie studio Evollet" }
+  ],
+  "performances": [
+    { "id": 1, "schedule_id": 1, "host_id": 1, "peak_viewers": 1450, "avg_viewers": 520, "total_orders": 168, "actual_gmv": 7850000, "target_gmv": 7000000, "target_reached": 1, "conversion_rate": 11.58, "performance_rating": 4.9, "notes": "Ninos Design: Target tembus 112%!" },
+    { "id": 2, "schedule_id": 2, "host_id": 2, "peak_viewers": 890, "avg_viewers": 340, "total_orders": 92, "actual_gmv": 5300000, "target_gmv": 5000000, "target_reached": 1, "conversion_rate": 10.33, "performance_rating": 4.5, "notes": "Ratu Hijab: Target tercapai 106%." },
+    { "id": 3, "schedule_id": 3, "host_id": 3, "peak_viewers": 2980, "avg_viewers": 1150, "total_orders": 245, "actual_gmv": 14200000, "target_gmv": 12000000, "target_reached": 1, "conversion_rate": 8.22, "performance_rating": 5.0, "notes": "Evollet: Meledak 118%!" }
+  ],
+  "payrolls": [
+    { "id": 1, "host_id": 1, "period_start": "2026-11-01", "period_end": "2026-11-07", "total_sessions": 1, "total_hours": 3.17, "hourly_rate": 45000, "base_salary": 142650, "total_gmv": 7850000, "commission_bonus": 196250, "target_incentive": 50000, "deductions": 0, "net_salary": 388900, "payment_status": "Paid", "paid_at": "2026-11-06 10:00:00", "payment_reference": "TRX-NINOS-20261106-001" }
+  ]
+}

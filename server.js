@@ -8,9 +8,11 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 const DB_FILE = path.join(__dirname, 'livehost_data.json');
+// Serve static files from app/static (primary) or static/ (fallback)
 const STATIC_DIR = path.join(__dirname, 'app', 'static');
+const STATIC_DIR_ALT = path.join(__dirname, 'static');
 
 const SUPPORTED_BRANDS = ["Ninos Design", "Ratu Hijab", "Evollet", "Wivi"];
 
@@ -46,24 +48,40 @@ function getDefaultData() {
   };
 }
 
+// In-memory cache: used if disk is read-only
+let _memCache = null;
+
 function loadData() {
+  // Try disk first
   try {
     if (fs.existsSync(DB_FILE)) {
-      return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      const content = fs.readFileSync(DB_FILE, 'utf8');
+      const parsed = JSON.parse(content);
+      // Validate it has hosts
+      if (parsed && Array.isArray(parsed.hosts) && parsed.hosts.length > 0) {
+        _memCache = parsed;
+        return parsed;
+      }
     }
   } catch (e) {
-    console.error('Error reading DB_FILE', e);
+    console.error('loadData error:', e.message);
   }
-  const init = getDefaultData();
-  saveData(init);
-  return init;
+  // Fall back to in-memory cache or defaults
+  if (!_memCache) {
+    _memCache = getDefaultData();
+    // Try to persist to disk
+    try { fs.writeFileSync(DB_FILE, JSON.stringify(_memCache, null, 2), 'utf8'); } catch(e) {}
+  }
+  return _memCache;
 }
 
 function saveData(data) {
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+    _memCache = data; // keep memory in sync
   } catch (e) {
-    console.error('Error saving DB_FILE', e);
+    console.error('Error saving DB_FILE (read-only disk?), using in-memory only:', e.message);
+    _memCache = data; // at least keep in memory for this session
   }
 }
 
@@ -97,14 +115,17 @@ const server = http.createServer((req, res) => {
   // 1. Serve Static Frontend Files
   if (req.method === 'GET') {
     if (pathname === '/' || pathname === '/index.html') {
-      const filePath = path.join(STATIC_DIR, 'index.html');
+      // Try app/static first, then static/
+      let filePath = path.join(STATIC_DIR, 'index.html');
+      if (!fs.existsSync(filePath)) filePath = path.join(STATIC_DIR_ALT, 'index.html');
       if (fs.existsSync(filePath)) {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         return fs.createReadStream(filePath).pipe(res);
       }
-    } else if (pathname.startsWith('/static/')) {
-      const rel = pathname.replace('/static/', '');
-      const filePath = path.join(STATIC_DIR, rel);
+    } else if (pathname.startsWith('/static/') || pathname.startsWith('/app/static/')) {
+      const rel = pathname.replace(/^\/(app\/)?static\//, '');
+      let filePath = path.join(STATIC_DIR, rel);
+      if (!fs.existsSync(filePath)) filePath = path.join(STATIC_DIR_ALT, rel);
       if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         let cType = 'text/plain';
         if (filePath.endsWith('.css')) cType = 'text/css';
@@ -600,6 +621,10 @@ const server = http.createServer((req, res) => {
   sendJSON(res, { error: 'Not found' }, 404);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 LiveHost Pro Node.js Server running on port ${PORT}`);
+  console.log(`📂 Static files from: ${STATIC_DIR}`);
+  // Warm up: load data on startup
+  const db = loadData();
+  console.log(`✅ Data loaded: ${db.hosts.length} hosts, ${db.schedules.length} schedules`);
 });

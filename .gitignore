@@ -13,6 +13,7 @@ ENV/
 *.db
 *.sqlite3
 app_data.db
+# Note: livehost_data.json is committed intentionally as seed data
 
 # Logs
 *.log
