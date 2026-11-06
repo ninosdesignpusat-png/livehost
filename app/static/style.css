@@ -1,4 +1,4 @@
-/* Custom styling for LiveHost App */
+/* Custom styling for LiveHost Pro */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f8fafc;
@@ -8,7 +8,7 @@ body {
 }
 
 .gradient-bg {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%);
 }
 
 .card {
@@ -22,6 +22,32 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
 }
 
+/* Brand Badges */
+.badge-ninos {
+    background-color: #881337;
+    color: #ffe4e6;
+    border: 1px solid #9f1239;
+}
+
+.badge-ratu {
+    background-color: #115e59;
+    color: #ccfbf1;
+    border: 1px solid #0f766e;
+}
+
+.badge-evollet {
+    background-color: #3730a3;
+    color: #e0e7ff;
+    border: 1px solid #4338ca;
+}
+
+.badge-wivi {
+    background-color: #92400e;
+    color: #fef3c7;
+    border: 1px solid #b45309;
+}
+
+/* Platform Badges */
 .badge-tiktok {
     background-color: #000000;
     color: #ffffff;

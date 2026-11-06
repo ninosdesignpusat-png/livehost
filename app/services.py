@@ -1,6 +1,7 @@
 """
 Business services for HostLive Management System.
-Handles scheduling logic, attendance calculation, performance analytics, and payroll processing.
+Handles scheduling logic, attendance with selfie & timestamp, multi-brand filtering,
+performance analytics (viewers & sales), and payroll processing.
 """
 
 from datetime import datetime
@@ -9,7 +10,7 @@ from .database import get_db_connection
 
 class SchedulingService:
     @staticmethod
-    def get_all_schedules(db_path=None, date_filter=None, platform_filter=None, host_filter=None):
+    def get_all_schedules(db_path=None, date_filter=None, platform_filter=None, host_filter=None, brand_filter=None):
         conn = get_db_connection(db_path)
         query = """
         SELECT 
@@ -20,11 +21,18 @@ class SchedulingService:
             a.id as attendance_id,
             a.clock_in,
             a.clock_out,
+            a.timestamp_clock_in,
+            a.timestamp_clock_out,
+            a.selfie_image,
+            a.viewers_count,
+            a.orders_count,
+            a.sales_amount,
             a.actual_hours,
             a.validation_status,
             a.late_minutes,
             p.id as performance_id,
             p.peak_viewers,
+            p.avg_viewers,
             p.total_orders,
             p.actual_gmv,
             p.target_reached
@@ -44,6 +52,9 @@ class SchedulingService:
         if host_filter:
             query += " AND s.host_id = ?"
             params.append(host_filter)
+        if brand_filter:
+            query += " AND s.brand = ?"
+            params.append(brand_filter)
 
         query += " ORDER BY s.scheduled_date DESC, s.start_time ASC"
         cursor = conn.cursor()
@@ -53,13 +64,13 @@ class SchedulingService:
         return rows
 
     @staticmethod
-    def create_schedule(host_id, title, platform, scheduled_date, start_time, end_time, planned_duration_hours, target_gmv=0.0, notes="", db_path=None):
+    def create_schedule(host_id, title, platform, scheduled_date, start_time, end_time, planned_duration_hours, target_gmv=0.0, brand="Ninos Design", notes="", db_path=None):
         conn = get_db_connection(db_path)
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO schedules (host_id, title, platform, scheduled_date, start_time, end_time, planned_duration_hours, target_gmv, notes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (host_id, title, platform, scheduled_date, start_time, end_time, planned_duration_hours, target_gmv, notes))
+        INSERT INTO schedules (host_id, brand, title, platform, scheduled_date, start_time, end_time, planned_duration_hours, target_gmv, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (host_id, brand, title, platform, scheduled_date, start_time, end_time, planned_duration_hours, target_gmv, notes))
         new_id = cursor.lastrowid
         conn.commit()
         conn.close()
@@ -68,7 +79,7 @@ class SchedulingService:
 
 class AttendanceService:
     @staticmethod
-    def clock_in(schedule_id, live_link="", notes="", db_path=None):
+    def clock_in(schedule_id, selfie_image="", live_link="", notes="", db_path=None):
         conn = get_db_connection(db_path)
         cursor = conn.cursor()
         
@@ -82,6 +93,7 @@ class AttendanceService:
         host_id = schedule["host_id"]
         now = datetime.now()
         now_str = now.strftime("%Y-%m-%d %H:%M:%S")
+        timestamp_str = now.strftime("%Y-%m-%d %H:%M:%S WIB")
 
         # Calculate late minutes if scheduled for today
         late_minutes = 0
@@ -100,15 +112,19 @@ class AttendanceService:
         if existing:
             cursor.execute("""
             UPDATE attendances 
-            SET clock_in = ?, live_link = ?, late_minutes = ?
+            SET clock_in = ?, timestamp_clock_in = ?, selfie_image = COALESCE(NULLIF(?, ''), selfie_image),
+                live_link = ?, late_minutes = ?
             WHERE id = ?
-            """, (now_str, live_link, late_minutes, existing["id"]))
+            """, (now_str, timestamp_str, selfie_image, live_link, late_minutes, existing["id"]))
             att_id = existing["id"]
         else:
             cursor.execute("""
-            INSERT INTO attendances (schedule_id, host_id, clock_in, live_link, late_minutes, validation_status)
-            VALUES (?, ?, ?, ?, ?, 'Pending')
-            """, (schedule_id, host_id, now_str, live_link, late_minutes))
+            INSERT INTO attendances (
+                schedule_id, host_id, clock_in, timestamp_clock_in, selfie_image,
+                live_link, late_minutes, validation_status
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+            """, (schedule_id, host_id, now_str, timestamp_str, selfie_image, live_link, late_minutes))
             att_id = cursor.lastrowid
 
         # Update schedule status
@@ -116,10 +132,16 @@ class AttendanceService:
 
         conn.commit()
         conn.close()
-        return {"attendance_id": att_id, "clock_in": now_str, "late_minutes": late_minutes}
+        return {
+            "attendance_id": att_id,
+            "clock_in": now_str,
+            "timestamp_clock_in": timestamp_str,
+            "late_minutes": late_minutes,
+            "has_selfie": bool(selfie_image)
+        }
 
     @staticmethod
-    def clock_out(schedule_id, proof_image_url="", supervisor_notes="", db_path=None):
+    def clock_out(schedule_id, viewers_count=0, orders_count=0, sales_amount=0.0, selfie_image="", proof_image_url="", supervisor_notes="", db_path=None):
         conn = get_db_connection(db_path)
         cursor = conn.cursor()
 
@@ -129,25 +151,65 @@ class AttendanceService:
             conn.close()
             raise ValueError("Cannot clock out without prior clock-in.")
 
+        cursor.execute("SELECT * FROM schedules WHERE id = ?", (schedule_id,))
+        schedule = cursor.fetchone()
+
         now = datetime.now()
         now_str = now.strftime("%Y-%m-%d %H:%M:%S")
+        timestamp_str = now.strftime("%Y-%m-%d %H:%M:%S WIB")
 
         clock_in_dt = datetime.strptime(att["clock_in"], "%Y-%m-%d %H:%M:%S")
         duration_seconds = (now - clock_in_dt).total_seconds()
         actual_hours = round(max(0.1, duration_seconds / 3600), 2)
 
+        final_selfie = selfie_image if selfie_image else att["selfie_image"]
+
         cursor.execute("""
         UPDATE attendances
-        SET clock_out = ?, actual_hours = ?, proof_image_url = ?, supervisor_notes = ?, validation_status = 'Approved'
+        SET clock_out = ?, timestamp_clock_out = ?, actual_hours = ?,
+            selfie_image = ?, proof_image_url = ?, viewers_count = ?,
+            orders_count = ?, sales_amount = ?, supervisor_notes = ?, validation_status = 'Approved'
         WHERE id = ?
-        """, (now_str, actual_hours, proof_image_url, supervisor_notes, att["id"]))
+        """, (now_str, timestamp_str, actual_hours, final_selfie, proof_image_url,
+              viewers_count, orders_count, sales_amount, supervisor_notes, att["id"]))
 
         # Update schedule status
         cursor.execute("UPDATE schedules SET status = 'Completed' WHERE id = ?", (schedule_id,))
 
+        # Automatically link sales & viewers to performance record
+        if sales_amount > 0 or viewers_count > 0 or orders_count > 0:
+            target_gmv = schedule["target_gmv"] or 0.0
+            target_reached = 1 if (sales_amount >= target_gmv and target_gmv > 0) else 0
+            conv_rate = round((orders_count / viewers_count) * 100, 2) if viewers_count > 0 else 0.0
+
+            cursor.execute("SELECT id FROM performances WHERE schedule_id = ?", (schedule_id,))
+            perf_row = cursor.fetchone()
+            if perf_row:
+                cursor.execute("""
+                UPDATE performances
+                SET peak_viewers = ?, avg_viewers = ?, total_orders = ?,
+                    actual_gmv = ?, target_reached = ?, conversion_rate = ?
+                WHERE id = ?
+                """, (viewers_count, int(viewers_count * 0.4), orders_count, sales_amount, target_reached, conv_rate, perf_row["id"]))
+            else:
+                cursor.execute("""
+                INSERT INTO performances (
+                    schedule_id, host_id, peak_viewers, avg_viewers, total_orders,
+                    actual_gmv, target_gmv, target_reached, conversion_rate, performance_rating
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 5.0)
+                """, (schedule_id, schedule["host_id"], viewers_count, int(viewers_count * 0.4), orders_count, sales_amount, target_gmv, target_reached, conv_rate))
+
         conn.commit()
         conn.close()
-        return {"attendance_id": att["id"], "clock_out": now_str, "actual_hours": actual_hours}
+        return {
+            "attendance_id": att["id"],
+            "clock_out": now_str,
+            "timestamp_clock_out": timestamp_str,
+            "actual_hours": actual_hours,
+            "viewers_count": viewers_count,
+            "orders_count": orders_count,
+            "sales_amount": sales_amount
+        }
 
 
 class PerformanceService:
@@ -195,6 +257,13 @@ class PerformanceService:
                   actual_gmv, target_gmv, target_reached, conversion_rate, performance_rating, notes))
             perf_id = cursor.lastrowid
 
+        # Also sync to attendances
+        cursor.execute("""
+        UPDATE attendances
+        SET viewers_count = ?, orders_count = ?, sales_amount = ?
+        WHERE schedule_id = ?
+        """, (peak_viewers, total_orders, actual_gmv, schedule_id))
+
         conn.commit()
         conn.close()
         return {
@@ -211,14 +280,6 @@ class PayrollService:
 
     @staticmethod
     def calculate_payroll(host_id, period_start, period_end, db_path=None):
-        """
-        Calculates wage breakdown for a host in a specific period:
-        - Base Pay = Sum of (actual_hours * host.hourly_rate) for completed/approved sessions
-        - Commission Bonus = Sum of (actual_gmv * host.commission_rate)
-        - Target Incentive = Count of target reached * Rp 50.000
-        - Deductions = Sum of late penalties
-        - Net Salary = Base Pay + Commission Bonus + Target Incentive - Deductions
-        """
         conn = get_db_connection(db_path)
         cursor = conn.cursor()
 
@@ -229,18 +290,20 @@ class PayrollService:
             conn.close()
             raise ValueError("Host not found.")
 
-        # Query completed sessions in period
+        # Query completed sessions in period with brand details
         cursor.execute("""
         SELECT 
             s.id as schedule_id,
+            s.brand,
             s.title,
             s.scheduled_date,
             s.platform,
             s.planned_duration_hours,
             COALESCE(a.actual_hours, s.planned_duration_hours) as actual_hours,
             COALESCE(a.late_minutes, 0) as late_minutes,
-            COALESCE(p.actual_gmv, 0.0) as actual_gmv,
-            COALESCE(p.target_reached, 0) as target_reached
+            COALESCE(p.actual_gmv, a.sales_amount, 0.0) as actual_gmv,
+            COALESCE(p.target_reached, 0) as target_reached,
+            COALESCE(p.total_orders, a.orders_count, 0) as total_orders
         FROM schedules s
         LEFT JOIN attendances a ON s.id = a.schedule_id
         LEFT JOIN performances p ON s.id = p.schedule_id
@@ -248,6 +311,7 @@ class PayrollService:
           AND s.scheduled_date >= ? 
           AND s.scheduled_date <= ?
           AND s.status = 'Completed'
+        ORDER BY s.scheduled_date ASC
         """, (host_id, period_start, period_end))
 
         sessions = [dict(r) for r in cursor.fetchall()]
@@ -264,12 +328,21 @@ class PayrollService:
         target_reached_count = sum(1 for s in sessions if s["target_reached"] == 1)
         target_incentive = target_reached_count * PayrollService.TARGET_INCENTIVE_BONUS
 
-        # Late deductions
         total_late_minutes = sum(s["late_minutes"] for s in sessions)
         late_blocks = total_late_minutes // 15
         deductions = late_blocks * PayrollService.LATE_PENALTY_RATE
 
         net_salary = max(0.0, round(base_salary + commission_bonus + target_incentive - deductions, 2))
+
+        # Brand summary breakdown
+        brand_summary = {}
+        for s in sessions:
+            b = s["brand"] or "Ninos Design"
+            if b not in brand_summary:
+                brand_summary[b] = {"sessions": 0, "hours": 0.0, "gmv": 0.0}
+            brand_summary[b]["sessions"] += 1
+            brand_summary[b]["hours"] += round(s["actual_hours"], 2)
+            brand_summary[b]["gmv"] += s["actual_gmv"]
 
         conn.close()
         return {
@@ -292,6 +365,7 @@ class PayrollService:
             "total_late_minutes": total_late_minutes,
             "deductions": deductions,
             "net_salary": net_salary,
+            "brand_summary": brand_summary,
             "sessions": sessions
         }
 

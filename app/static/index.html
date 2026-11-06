@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiveHost Pro - Absensi, Jadwal, Performa & Payroll Host Live</title>
+    <title>LiveHost Pro - Ninos Design, Ratu Hijab, Evollet, Wivi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,19 +16,21 @@
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-xl text-white shadow-inner">
-                        <i class="fa-solid fa-tower-broadcast"></i>
+                        <i class="fa-solid fa-vest-patches"></i>
                     </div>
                     <div>
-                        <h1 class="font-extrabold text-lg sm:text-xl tracking-tight">LiveHost Pro</h1>
-                        <p class="text-xs text-indigo-100 hidden sm:block">Aplikasi Manajemen Jadwal, Absensi, Performa & Gaji Host Live</p>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="font-extrabold text-lg sm:text-xl tracking-tight">LiveHost Pro</h1>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-white/20 uppercase tracking-widest">Multi-Brand</span>
+                        </div>
+                        <p class="text-xs text-indigo-100 hidden sm:block">Ninos Design • Ratu Hijab • Evollet • Wivi</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
-                        <span class="w-2 h-2 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-                        Live System Active
-                    </span>
-                    <button onclick="openModal('modal-host')" class="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-2 rounded-lg font-medium transition border border-white/20">
+                    <div id="live-clock" class="text-xs font-mono font-bold bg-white/10 px-3 py-1.5 rounded-lg border border-white/20 text-indigo-100">
+                        --:--:-- WIB
+                    </div>
+                    <button onclick="openModal('modal-host')" class="bg-white/15 hover:bg-white/25 text-white text-xs px-3 py-2 rounded-lg font-semibold transition border border-white/20">
                         <i class="fa-solid fa-user-plus mr-1"></i> + Host Baru
                     </button>
                 </div>
@@ -39,6 +41,35 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
+        <!-- Brand Selector & Filter Bar -->
+        <div class="bg-white rounded-xl border border-slate-200 p-3 shadow-sm flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider pl-1 mr-1">Brand:</span>
+                <button onclick="filterByBrand('')" id="brand-btn-all" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition">
+                    Semua Brand
+                </button>
+                <button onclick="filterByBrand('Ninos Design')" id="brand-btn-ninos" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                    <span>Ninos Design</span>
+                </button>
+                <button onclick="filterByBrand('Ratu Hijab')" id="brand-btn-ratu" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-teal-600"></span>
+                    <span>Ratu Hijab</span>
+                </button>
+                <button onclick="filterByBrand('Evollet')" id="brand-btn-evollet" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                    <span>Evollet</span>
+                </button>
+                <button onclick="filterByBrand('Wivi')" id="brand-btn-wivi" class="brand-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+                    <span>Wivi</span>
+                </button>
+            </div>
+            <div class="text-xs font-medium text-slate-500 self-end md:self-auto">
+                Filter Aktif: <span id="active-brand-label" class="font-bold text-indigo-700">Semua Brand</span>
+            </div>
+        </div>
+
         <!-- Metrics Overview Grid -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="card p-5">
@@ -47,16 +78,16 @@
                     <i class="fa-solid fa-users text-indigo-500 text-base"></i>
                 </div>
                 <div class="text-2xl font-black text-slate-800" id="stat-active-hosts">-</div>
-                <p class="text-xs text-slate-500 mt-1">Host live part-time terdaftar</p>
+                <p class="text-xs text-slate-500 mt-1">Host live part-time studio</p>
             </div>
 
             <div class="card p-5">
                 <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
-                    <span>Jadwal Live</span>
+                    <span>Jadwal Shift</span>
                     <i class="fa-regular fa-calendar-check text-indigo-500 text-base"></i>
                 </div>
                 <div class="text-2xl font-black text-slate-800" id="stat-total-schedules">-</div>
-                <p class="text-xs text-slate-500 mt-1"><span id="stat-total-hours">0</span> jam durasi terjadwal</p>
+                <p class="text-xs text-slate-500 mt-1"><span id="stat-total-hours">0</span> jam siaran terjadwal</p>
             </div>
 
             <div class="card p-5">
@@ -71,10 +102,10 @@
             <div class="card p-5">
                 <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
                     <span>Pending Payroll</span>
-                    <i class="fa-solid fa-receipt text-amber-500 text-base"></i>
+                    <i class="fa-solid fa-wallet text-amber-500 text-base"></i>
                 </div>
                 <div class="text-2xl font-black text-amber-600" id="stat-pending-payroll">Rp 0</div>
-                <p class="text-xs text-slate-500 mt-1">Siap diverifikasi & ditransfer</p>
+                <p class="text-xs text-slate-500 mt-1">Siap verifikasi & transfer</p>
             </div>
         </div>
 
@@ -83,18 +114,18 @@
             <nav class="flex space-x-6 overflow-x-auto text-sm font-medium text-slate-600" aria-label="Tabs">
                 <button onclick="switchTab('tab-jadwal')" id="btn-tab-jadwal" class="tab-btn active pb-3 px-1 flex items-center space-x-2">
                     <i class="fa-regular fa-calendar-days"></i>
-                    <span>1. Jadwal Shift Live</span>
+                    <span>1. Jadwal Shift Brand</span>
                 </button>
                 <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="tab-btn pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-solid fa-user-clock"></i>
-                    <span>2. Absensi & Clock-In/Out</span>
+                    <i class="fa-solid fa-camera"></i>
+                    <span>2. Absensi Selfie & Jam Kerja</span>
                 </button>
                 <button onclick="switchTab('tab-performa')" id="btn-tab-performa" class="tab-btn pb-3 px-1 flex items-center space-x-2">
                     <i class="fa-solid fa-chart-pie"></i>
-                    <span>3. Tracking Performa</span>
+                    <span>3. Penonton & Penjualan</span>
                 </button>
                 <button onclick="switchTab('tab-payroll')" id="btn-tab-payroll" class="tab-btn pb-3 px-1 flex items-center space-x-2">
-                    <i class="fa-solid fa-wallet"></i>
+                    <i class="fa-solid fa-receipt"></i>
                     <span>4. Pembayaran Gaji Part-Time</span>
                 </button>
                 <button onclick="switchTab('tab-hosts')" id="btn-tab-hosts" class="tab-btn pb-3 px-1 flex items-center space-x-2">
@@ -109,13 +140,11 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900">Jadwal Shift Live Streaming</h2>
-                    <p class="text-xs text-slate-500">Alokasi jam tayang, platform streaming, dan target penjualan host.</p>
+                    <p class="text-xs text-slate-500">Alokasi host di Brand (Ninos Design, Ratu Hijab, Evollet, Wivi) & target penjualan.</p>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button onclick="openModal('modal-schedule')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-sm transition">
-                        <i class="fa-solid fa-plus mr-1.5"></i> Buat Shift Baru
-                    </button>
-                </div>
+                <button onclick="openModal('modal-schedule')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-sm transition">
+                    <i class="fa-solid fa-plus mr-1.5"></i> Buat Shift Baru
+                </button>
             </div>
 
             <!-- Schedules Table -->
@@ -124,16 +153,17 @@
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
                             <tr>
+                                <th class="p-3.5">Brand</th>
                                 <th class="p-3.5">Tanggal & Jam</th>
                                 <th class="p-3.5">Host</th>
                                 <th class="p-3.5">Platform & Sesi</th>
                                 <th class="p-3.5">Durasi</th>
                                 <th class="p-3.5">Target GMV</th>
                                 <th class="p-3.5">Status</th>
-                                <th class="p-3.5 text-right">Aksi Cepat</th>
+                                <th class="p-3.5 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="schedules-tbody" class="divide-y divide-slate-100">
+                        <tbody id="schedules-tbody" class="divide-y divide-slate-100 text-xs">
                             <!-- Populated by JS -->
                         </tbody>
                     </table>
@@ -141,60 +171,130 @@
             </div>
         </section>
 
-        <!-- TAB 2: ABSENSI LIVE -->
+        <!-- TAB 2: ABSENSI DENGAN FITUR SELFIE & TIMESTAMP -->
         <section id="tab-absensi" class="tab-content hidden space-y-4">
             <div class="flex justify-between items-center">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900">Absensi Kehadiran & Sesi Live</h2>
-                    <p class="text-xs text-slate-500">Pencatatan real-time Clock-In, Clock-Out, link room live, dan durasi kerja aktual.</p>
+                    <h2 class="text-lg font-bold text-slate-900">Absensi Kehadiran Host Live</h2>
+                    <p class="text-xs text-slate-500">Dilengkapi fitur foto selfie langsung dengan kamera depan dan timestamp WIB otomatis.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Clock In/Out Quick Action Box -->
-                <div class="card p-5 space-y-4 md:col-span-1 border-indigo-100">
-                    <div class="flex items-center space-x-2 text-indigo-700 font-bold text-sm">
-                        <i class="fa-solid fa-stopwatch"></i>
-                        <h3>Terminal Absen Langsung</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Selfie & Terminal Box -->
+                <div class="card p-5 space-y-4 lg:col-span-5 border-indigo-100">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div class="flex items-center space-x-2 text-indigo-700 font-bold text-sm">
+                            <i class="fa-solid fa-camera"></i>
+                            <h3>Terminal Selfie & Absen</h3>
+                        </div>
+                        <span id="terminal-live-time" class="text-[11px] font-mono font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">--:--:-- WIB</span>
                     </div>
-                    <p class="text-xs text-slate-500">Pilih sesi aktif untuk melakukan Clock-In saat live mulai atau Clock-Out saat siaran selesai.</p>
 
-                    <div class="space-y-3">
+                    <!-- Video / Canvas Selfie Frame -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-slate-700">Foto Selfie Bukti Kehadiran</label>
+                        <div class="relative w-full h-48 bg-slate-900 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center">
+                            <!-- Video Element for Webcam -->
+                            <video id="selfie-video" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                            
+                            <!-- Captured Image Preview -->
+                            <img id="selfie-img-preview" class="w-full h-full object-cover hidden" alt="Selfie Host">
+                            
+                            <!-- Initial Placeholder -->
+                            <div id="selfie-placeholder" class="text-center text-slate-400 p-4">
+                                <i class="fa-solid fa-camera text-3xl mb-2 text-slate-500"></i>
+                                <p class="text-xs font-medium">Buka kamera atau unggah foto selfie sebelum Clock-In / Clock-Out</p>
+                            </div>
+
+                            <!-- Live Timestamp Overlay -->
+                            <div id="selfie-timestamp-badge" class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-md text-white text-[10px] font-mono px-2 py-1 rounded hidden border border-white/20">
+                                <i class="fa-regular fa-clock mr-1"></i><span id="selfie-timestamp-text">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Canvas for Snapshot -->
+                        <canvas id="selfie-canvas" class="hidden"></canvas>
+
+                        <!-- Camera Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button type="button" onclick="startWebcam()" id="btn-start-camera" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 px-3 rounded-lg font-semibold border flex items-center justify-center space-x-1">
+                                <i class="fa-solid fa-video"></i>
+                                <span>Buka Kamera</span>
+                            </button>
+                            <button type="button" onclick="captureSelfieSnapshot()" id="btn-capture-selfie" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs py-2 px-3 rounded-lg font-bold shadow-sm flex items-center justify-center space-x-1 hidden">
+                                <i class="fa-solid fa-camera-retro"></i>
+                                <span>Ambil Selfie</span>
+                            </button>
+                            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 px-3 rounded-lg font-semibold border text-center cursor-pointer flex items-center justify-center space-x-1">
+                                <i class="fa-solid fa-upload"></i>
+                                <span>Unggah Foto</span>
+                                <input type="file" accept="image/*" onchange="handleSelfieUpload(event)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Controls Form -->
+                    <div class="space-y-3 pt-2 border-t">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Sesi Shift</label>
-                            <select id="clock-schedule-select" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Shift Live Host</label>
+                            <select id="clock-schedule-select" onchange="onScheduleSelectChange()" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white">
                                 <!-- Populated by JS -->
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">Link Room Live (Opsional)</label>
-                            <input type="url" id="clock-live-link" placeholder="https://tiktok.com/@brand/live" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg">
+                            <input type="url" id="clock-live-link" placeholder="https://tiktok.com/@ninosdesign/live" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg">
                         </div>
-                        <div class="grid grid-cols-2 gap-2 pt-2">
-                            <button onclick="handleClockIn()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
-                                <i class="fa-solid fa-play mr-1"></i> Clock-In
+
+                        <!-- Clock Out Fields (Viewers & Sales) -->
+                        <div id="clock-out-metrics-box" class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-2">
+                            <span class="text-[11px] font-bold text-slate-700 block"><i class="fa-solid fa-chart-line text-indigo-600 mr-1"></i>Input Hasil Sesi Siaran (Saat Clock-Out):</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Penonton (Peak Viewers)</label>
+                                    <input type="number" id="clock-out-viewers" placeholder="1500" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Jumlah Order (Checkout)</label>
+                                    <input type="number" id="clock-out-orders" placeholder="120" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Realisasi Penjualan (GMV Rp)</label>
+                                <input type="number" id="clock-out-sales" placeholder="7500000" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="handleClockIn()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Clock-In Mulai</span>
                             </button>
-                            <button onclick="handleClockOut()" class="w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
-                                <i class="fa-solid fa-stop mr-1"></i> Clock-Out
+                            <button onclick="handleClockOut()" class="w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-stop"></i>
+                                <span>Clock-Out Selesai</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Attendance Log Table -->
-                <div class="card md:col-span-2 overflow-hidden">
+                <!-- Attendance Log & Selfie Gallery Table -->
+                <div class="card lg:col-span-7 overflow-hidden">
                     <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-slate-800">Riwayat Kehadiran Shift Terakhir</h4>
+                        <h4 class="font-bold text-sm text-slate-800">Log Kehadiran & Foto Bukti Selfie Host</h4>
+                        <span class="text-xs text-slate-400">Timestamp otomatis terverifikasi</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
                                 <tr>
-                                    <th class="p-3">Host</th>
-                                    <th class="p-3">Clock-In</th>
-                                    <th class="p-3">Clock-Out</th>
-                                    <th class="p-3">Durasi Nyata</th>
-                                    <th class="p-3">Keterlambatan</th>
+                                    <th class="p-3">Selfie</th>
+                                    <th class="p-3">Host & Brand</th>
+                                    <th class="p-3">Timestamp Mulai / Selesai</th>
+                                    <th class="p-3">Jam Kerja</th>
+                                    <th class="p-3">Hasil Penjualan</th>
                                     <th class="p-3">Status</th>
                                 </tr>
                             </thead>
@@ -207,12 +307,12 @@
             </div>
         </section>
 
-        <!-- TAB 3: TRACKING PERFORMANCE -->
+        <!-- TAB 3: PENONTON & PENJUALAN (PERFORMANCE) -->
         <section id="tab-performa" class="tab-content hidden space-y-4">
             <div class="flex justify-between items-center">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900">Tracking Performa & Metrik Penjualan</h2>
-                    <p class="text-xs text-slate-500">Analisis Viewers, Jumlah Order, Omset GMV, dan Pencapaian Target Sesi.</p>
+                    <h2 class="text-lg font-bold text-slate-900">Tracking Penonton & Penjualan (Performance)</h2>
+                    <p class="text-xs text-slate-500">Analisis Viewers, Jumlah Order, Omset Penjualan GMV, dan Pencapaian Target per Brand.</p>
                 </div>
             </div>
 
@@ -222,13 +322,14 @@
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-100/75 border-b border-slate-200 text-xs uppercase text-slate-500 font-semibold">
                             <tr>
-                                <th class="p-3.5">Host & Sesi</th>
-                                <th class="p-3.5">Peak / Avg Viewers</th>
-                                <th class="p-3.5">Pesanan (Order)</th>
-                                <th class="p-3.5">Actual GMV</th>
+                                <th class="p-3.5">Brand & Sesi</th>
+                                <th class="p-3.5">Host</th>
+                                <th class="p-3.5">Jumlah Penonton</th>
+                                <th class="p-3.5">Jumlah Order</th>
+                                <th class="p-3.5">Realisasi Penjualan</th>
                                 <th class="p-3.5">Target GMV</th>
-                                <th class="p-3.5">Pencapaian</th>
-                                <th class="p-3.5 text-right">Input Metrik</th>
+                                <th class="p-3.5">Pencapaian Target</th>
+                                <th class="p-3.5 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="performance-tbody" class="divide-y divide-slate-100 text-xs">
@@ -244,13 +345,13 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900">Perhitungan & Pembayaran Gaji Part-Time</h2>
-                    <p class="text-xs text-slate-500">Kalkulasi upah jam kerja + bonus komisi GMV + insentif target - potongan keterlambatan.</p>
+                    <p class="text-xs text-slate-500">Akumulasi upah jam kerja + bonus komisi GMV dari Ninos Design, Ratu Hijab, Evollet, dan Wivi.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Payroll Generator Card -->
-                <div class="card p-5 space-y-4 border-indigo-100">
+                <div class="card p-5 space-y-4 lg:col-span-4 border-indigo-100">
                     <h3 class="font-bold text-sm text-indigo-700 flex items-center space-x-2">
                         <i class="fa-solid fa-calculator"></i>
                         <span>Kalkulator & Generate Slip Gaji</span>
@@ -258,7 +359,7 @@
 
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Host</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Host Part-Time</label>
                             <select id="payroll-host-select" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white">
                                 <!-- Populated by JS -->
                             </select>
@@ -310,6 +411,11 @@
                             <span class="text-indigo-600 text-base" id="prev-net">Rp 0</span>
                         </div>
 
+                        <!-- Brand breakdown preview -->
+                        <div id="prev-brand-breakdown" class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-[11px] space-y-1">
+                            <!-- Populated by JS -->
+                        </div>
+
                         <button onclick="generateAndSavePayroll()" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
                             <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Terbitkan & Simpan Slip Gaji
                         </button>
@@ -317,9 +423,9 @@
                 </div>
 
                 <!-- Payroll Records List -->
-                <div class="card lg:col-span-2 overflow-hidden">
+                <div class="card lg:col-span-8 overflow-hidden">
                     <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-slate-800">Daftar Slip Gaji & Status Payout</h4>
+                        <h4 class="font-bold text-sm text-slate-800">Daftar Slip Gaji & Rekening Transfer</h4>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
@@ -347,7 +453,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900">Daftar Host Live Streaming</h2>
-                    <p class="text-xs text-slate-500">Profil host, tier keahlian, rate honor per jam, dan komisi GMV.</p>
+                    <p class="text-xs text-slate-500">Profil host, tier keahlian, rate honor per jam, dan komisi omset penjualan.</p>
                 </div>
                 <button onclick="openModal('modal-host')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm">
                     <i class="fa-solid fa-user-plus mr-1"></i> Tambah Host
@@ -379,7 +485,7 @@
 
     </main>
 
-    <!-- MODAL 1: BUAT SHIFT BARU -->
+    <!-- MODAL 1: BUAT SHIFT BARU DENGAN BRAND SELECTOR -->
     <div id="modal-schedule" class="modal fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -387,13 +493,24 @@
                 <button onclick="closeModal('modal-schedule')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-create-schedule" onsubmit="submitNewSchedule(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-semibold mb-1">Host Live</label>
-                    <select id="sched-host-id" class="w-full p-2.5 border rounded-lg" required></select>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Pilih Brand</label>
+                        <select id="sched-brand" class="w-full p-2.5 border rounded-lg font-bold bg-slate-50" required>
+                            <option value="Ninos Design">Ninos Design</option>
+                            <option value="Ratu Hijab">Ratu Hijab</option>
+                            <option value="Evollet">Evollet</option>
+                            <option value="Wivi">Wivi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Host Live</label>
+                        <select id="sched-host-id" class="w-full p-2.5 border rounded-lg" required></select>
+                    </div>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Judul / Campaign Sesi</label>
-                    <input type="text" id="sched-title" placeholder="Contoh: Flash Sale 11.11 Skincare" class="w-full p-2.5 border rounded-lg" required>
+                    <input type="text" id="sched-title" placeholder="Contoh: Gamis Syari Launching - Ninos Design" class="w-full p-2.5 border rounded-lg" required>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -425,12 +542,12 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">Target GMV (Rp)</label>
-                    <input type="number" id="sched-target-gmv" placeholder="5000000" class="w-full p-2.5 border rounded-lg">
+                    <label class="block font-semibold mb-1">Target Penjualan GMV (Rp)</label>
+                    <input type="number" id="sched-target-gmv" placeholder="7000000" class="w-full p-2.5 border rounded-lg">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Catatan Khusus</label>
-                    <textarea id="sched-notes" rows="2" placeholder="Fokus push etalase 1-5" class="w-full p-2.5 border rounded-lg"></textarea>
+                    <textarea id="sched-notes" rows="2" placeholder="Fokus produk best-seller & voucher live" class="w-full p-2.5 border rounded-lg"></textarea>
                 </div>
                 <div class="flex justify-end space-x-2 pt-3">
                     <button type="button" onclick="closeModal('modal-schedule')" class="px-4 py-2 border rounded-lg text-slate-600">Batal</button>
@@ -444,30 +561,34 @@
     <div id="modal-perf" class="modal fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="font-bold text-slate-900 text-base">Input Metrik Performa Sesi</h3>
+                <h3 class="font-bold text-slate-900 text-base">Input Metrik Penonton & Penjualan</h3>
                 <button onclick="closeModal('modal-perf')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-perf" onsubmit="submitPerformance(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="perf-schedule-id">
-                <div>
-                    <label class="block font-semibold mb-1">Peak Viewers (Penonton Puncak)</label>
-                    <input type="number" id="perf-peak" placeholder="1500" class="w-full p-2.5 border rounded-lg" required>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Peak Viewers (Puncak)</label>
+                        <input type="number" id="perf-peak" placeholder="1500" class="w-full p-2.5 border rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Average Viewers (Rata-rata)</label>
+                        <input type="number" id="perf-avg" placeholder="450" class="w-full p-2.5 border rounded-lg" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-semibold mb-1">Total Pesanan (Orders)</label>
+                        <input type="number" id="perf-orders" placeholder="120" class="w-full p-2.5 border rounded-lg" required>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Rating Host (1-5)</label>
+                        <input type="number" step="0.1" min="1" max="5" id="perf-rating" value="5.0" class="w-full p-2.5 border rounded-lg">
+                    </div>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">Average Viewers (Rata-rata)</label>
-                    <input type="number" id="perf-avg" placeholder="450" class="w-full p-2.5 border rounded-lg" required>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Total Pesanan (Order/Checkout)</label>
-                    <input type="number" id="perf-orders" placeholder="120" class="w-full p-2.5 border rounded-lg" required>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Realisasi GMV Penjualan (Rp)</label>
-                    <input type="number" id="perf-actual-gmv" placeholder="6500000" class="w-full p-2.5 border rounded-lg" required>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1">Rating Host (1.0 - 5.0)</label>
-                    <input type="number" step="0.1" min="1" max="5" id="perf-rating" value="5.0" class="w-full p-2.5 border rounded-lg">
+                    <label class="block font-semibold mb-1">Realisasi Penjualan GMV (Rp)</label>
+                    <input type="number" id="perf-actual-gmv" placeholder="7800000" class="w-full p-2.5 border rounded-lg" required>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">Catatan Evaluasi</label>
@@ -475,7 +596,7 @@
                 </div>
                 <div class="flex justify-end space-x-2 pt-3">
                     <button type="button" onclick="closeModal('modal-perf')" class="px-4 py-2 border rounded-lg text-slate-600">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold">Simpan Hasil Performa</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold">Simpan Hasil</button>
                 </div>
             </form>
         </div>
@@ -519,9 +640,9 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-semibold mb-1">Komisi GMV (%)</label>
+                        <label class="block font-semibold mb-1">Komisi Penjualan (%)</label>
                         <input type="number" step="0.005" id="host-commission" value="0.02" class="w-full p-2.5 border rounded-lg" required>
-                        <span class="text-[10px] text-slate-400">0.02 = 2.0%</span>
+                        <span class="text-[10px] text-slate-400">0.02 = 2.0% dari GMV</span>
                     </div>
                     <div>
                         <label class="block font-semibold mb-1">Spesialisasi Platform</label>

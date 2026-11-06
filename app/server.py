@@ -1,13 +1,13 @@
 """
 Lightweight REST API & Web Server for HostLive Management System.
-Uses Python's built-in standard library http.server for zero-dependency portability.
+Supports Ninos Design, Ratu Hijab, Evollet, Wivi with Attendance Selfie, Timestamp, Viewers, and Sales.
 """
 
 import os
 import json
 import urllib.parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from .database import init_db, seed_sample_data, get_db_connection
+from .database import init_db, seed_sample_data, get_db_connection, SUPPORTED_BRANDS
 from .services import SchedulingService, AttendanceService, PerformanceService, PayrollService
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
@@ -80,7 +80,10 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
                 return
 
         # API Endpoints
-        if path == "/api/overview":
+        if path == "/api/brands":
+            return self._send_json({"brands": SUPPORTED_BRANDS})
+
+        elif path == "/api/overview":
             conn = get_db_connection()
             cur = conn.cursor()
             
@@ -100,6 +103,15 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
             cur.execute("SELECT COALESCE(SUM(net_salary), 0) FROM payrolls WHERE payment_status = 'Pending'")
             pending_payroll = cur.fetchone()[0]
 
+            # Brand breakdown
+            cur.execute("""
+            SELECT s.brand, COUNT(s.id) as total_shifts, COALESCE(SUM(p.actual_gmv), 0) as brand_gmv
+            FROM schedules s
+            LEFT JOIN performances p ON s.id = p.schedule_id
+            GROUP BY s.brand
+            """)
+            brand_stats = [dict(r) for r in cur.fetchall()]
+
             conn.close()
             return self._send_json({
                 "active_hosts": active_hosts,
@@ -107,7 +119,8 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
                 "total_planned_hours": total_planned_hours,
                 "total_gmv": total_gmv,
                 "total_orders": total_orders,
-                "pending_payroll": pending_payroll
+                "pending_payroll": pending_payroll,
+                "brand_stats": brand_stats
             })
 
         elif path == "/api/hosts":
@@ -122,10 +135,12 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
             date_filter = query.get("date", [None])[0]
             platform_filter = query.get("platform", [None])[0]
             host_filter = query.get("host_id", [None])[0]
+            brand_filter = query.get("brand", [None])[0]
             schedules = SchedulingService.get_all_schedules(
                 date_filter=date_filter,
                 platform_filter=platform_filter,
-                host_filter=host_filter
+                host_filter=host_filter,
+                brand_filter=brand_filter
             )
             return self._send_json({"schedules": schedules})
 
@@ -185,6 +200,7 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
             elif path == "/api/schedules":
                 new_id = SchedulingService.create_schedule(
                     host_id=int(body["host_id"]),
+                    brand=body.get("brand", "Ninos Design"),
                     title=body["title"],
                     platform=body["platform"],
                     scheduled_date=body["scheduled_date"],
@@ -200,7 +216,9 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
                 schedule_id = int(body["schedule_id"])
                 res = AttendanceService.clock_in(
                     schedule_id=schedule_id,
-                    live_link=body.get("live_link", "")
+                    selfie_image=body.get("selfie_image", ""),
+                    live_link=body.get("live_link", ""),
+                    notes=body.get("notes", "")
                 )
                 return self._send_json(res)
 
@@ -208,6 +226,10 @@ class HostLiveAPIHandler(SimpleHTTPRequestHandler):
                 schedule_id = int(body["schedule_id"])
                 res = AttendanceService.clock_out(
                     schedule_id=schedule_id,
+                    viewers_count=int(body.get("viewers_count", 0)),
+                    orders_count=int(body.get("orders_count", 0)),
+                    sales_amount=float(body.get("sales_amount", 0.0)),
+                    selfie_image=body.get("selfie_image", ""),
                     proof_image_url=body.get("proof_image_url", ""),
                     supervisor_notes=body.get("supervisor_notes", "")
                 )
