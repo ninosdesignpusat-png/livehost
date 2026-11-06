@@ -1,43 +1,40 @@
-# 🎙️ LiveHost Pro - Sistem Manajemen Host Live Streaming Part-Time
+# 🎙️ LiveHost Pro - Sistem Multi-Brand Host Live Streaming Part-Time
+### (Ninos Design • Ratu Hijab • Evollet • Wivi)
 
 [![CI / Automated Testing](https://github.com/livehost/livehost-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/livehost/livehost-pro/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 
-Aplikasi lengkap dan siap pakai (*production-grade*) untuk agensi, toko online (*brand/seller*), atau manajemen konten dalam mengelola **host live streaming part-time** di berbagai platform (TikTok Live, Shopee Live, Tokopedia Play, Instagram Live).
+Aplikasi lengkap dan siap pakai (*production-grade*) untuk agensi dan manajemen brand **Ninos Design**, **Ratu Hijab**, **Evollet**, dan **Wivi** dalam mengelola **host live streaming part-time** di berbagai platform (TikTok Live, Shopee Live, Tokopedia Play, Instagram Live).
 
 ---
 
 ## 🌟 4 Fitur Utama (Core Pillars)
 
-### 1. 📅 Manajemen Jadwal Shift (Scheduling)
-* Penjadwalan shift siaran lengkap dengan tanggal, jam mulai, jam selesai, dan alokasi platform (TikTok, Shopee, Tokopedia, Instagram).
-* Penetapan target GMV (omset penjualan) spesifik per shift.
+### 1. 🏷️ Manajemen Jadwal Shift Multi-Brand (Scheduling)
+* Pilihan brand terintegrasi di setiap sesi: **Ninos Design**, **Ratu Hijab**, **Evollet**, dan **Wivi**.
+* Filter instan per brand pada dashboard jadwal shift.
+* Penjadwalan tanggal, jam mulai, jam selesai, alokasi platform (TikTok, Shopee, Tokopedia, Instagram), dan target omset GMV.
 * Status shift dinamis: *Scheduled*, *In Progress*, *Completed*, *Canceled*.
 
-### 2. ⏱️ Absensi Kehadiran & Jam Kerja (Attendance)
-* **Terminal Clock-In & Clock-Out** real-time dengan pencatatan detik siaran langsung.
-* Input link URL room siaran & link bukti screenshot sebagai validasi kehadiran.
-* Deteksi keterlambatan otomatis (*late minutes detection*) terhadap jam jadwal.
-* Perhitungan otomatis jam kerja aktual (*actual hours*).
+### 2. 📸 Absensi Selfie & Jam Kerja Real-Time (Attendance)
+* **Kamera Depan / Webcam Capture Langsung**: Host dapat mengambil foto selfie bukti kehadiran di studio atau mengunggah foto selfie.
+* **Timestamp Otomatis**: Setiap selfie otomatis ditempel watermark timestamp WIB (`YYYY-MM-DD HH:MM:SS WIB`) dan nama brand.
+* **Deteksi Keterlambatan**: Otomatis menghitung menit keterlambatan terhadap jam jadwal.
+* **Perhitungan Jam Kerja Nyata**: Menghitung jam siaran aktual (*actual hours*).
 
-### 3. 📊 Tracking Performa & Penjualan (Performance Tracking)
-* Pencatatan metrik live lengkap:
-  * **Peak Concurrent Viewers (PCV)** & **Average Viewers**.
-  * **Total Pesanan (Orders / Checkout Keranjang Kuning)**.
-  * **Realisasi GMV Penjualan (Rupiah)** vs Target GMV.
-  * **Conversion Rate (%)** & **Rating Evaluasi Host (1.0 - 5.0)**.
-* Progress bar visual pencapaian target dan status lolos target bonus.
+### 3. 📊 Tracking Penonton & Penjualan (Viewers & Sales Performance)
+* **Input Hasil Sesi Siaran**: Terintegrasi langsung saat Clock-Out atau form evaluasi:
+  * **Jumlah Penonton**: Peak Viewers (puncak) & Average Viewers (rata-rata penonton).
+  * **Penjualan**: Realisasi omset penjualan (GMV Rupiah) dan jumlah pesanan (*order/checkout*).
+* Evaluasi rasio konversi (% orders/viewers) dan rating performa host (1.0 - 5.0).
+* Progress bar visual pencapaian target GMV per brand.
 
 ### 4. 💰 Perhitungan & Pembayaran Gaji Part-Time (Payroll & Payout)
-* Skema penggajian fleksibel dan transparan untuk pekerja part-time:
-  $$\text{Gaji Net} = \text{Gaji Pokok Jam} + \text{Komisi GMV} + \text{Bonus Target} - \text{Potongan Terlambat}$$
-  * **Gaji Pokok Jam**: `Total Jam Aktual × Rate Honor Host (misal Rp 35.000 - Rp 50.000/jam)`.
-  * **Komisi GMV**: Persentase komisi omset (misal `1.5% - 3.0% × Realisasi GMV`).
-  * **Bonus Target**: Insentif tambahan flat (misal Rp 50.000/sesi saat omset tembus target).
-  * **Potongan Keterlambatan**: Denda flat per blok 15 menit keterlambatan.
-* Penerbitan **Slip Gaji Digital** resmi (nomor slip `#PAY-XXX`) beserta data rekening bank.
-* Manajemen status pembayaran: *Menunggu Transfer* vs *Lunas / Ditransfer* dengan nomor referensi bank.
+* Skema penggajian fleksibel dan transparan untuk host part-time:
+  $$\text{Gaji Net} = \text{Gaji Pokok Jam} + \text{Komisi Penjualan} + \text{Bonus Target} - \text{Potongan Terlambat}$$
+* Rincian siaran per brand (misal: total jam & omset di *Ninos Design*, *Ratu Hijab*, *Evollet*, *Wivi*).
+* Slip gaji digital `#PAY-XXX` beserta data rekening bank transfer dan pencatatan status lunas.
 
 ---
 
