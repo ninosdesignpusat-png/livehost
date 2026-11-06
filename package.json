@@ -1,0 +1,27 @@
+{
+  "name": "livehost-pro",
+  "version": "1.0.0",
+  "description": "Sistem Manajemen Absensi, Jadwal, Tracking Performa, & Gaji Host Live Part-time (Ninos Design, Ratu Hijab, Evollet, Wivi)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Build completed'",
+    "test": "node -e \"console.log('Tests OK')\""
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "livehost",
+    "ninos-design",
+    "ratu-hijab",
+    "evollet",
+    "wivi",
+    "payroll",
+    "attendance"
+  ],
+  "author": "Ninos Design Pusat",
+  "license": "MIT",
+  "dependencies": {}
+}
